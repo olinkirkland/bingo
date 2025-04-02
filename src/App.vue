@@ -1,10 +1,12 @@
 <template>
     <div class="app">
-        <h1>DB Bingo</h1>
-        <p>
-            Klicke auf die Felder, um sie durchzustreichen. Klicke erneut auf
-            ein Feld, um es wieder zu entfernen.
-        </p>
+        <section>
+            <h1>DB Bingo</h1>
+            <p>
+                Klicke auf die Felder, um sie durchzustreichen. Klicke erneut
+                auf ein Feld, um es wieder zu entfernen.
+            </p>
+        </section>
 
         <div class="scrollable-container">
             <ul class="spaces">
@@ -35,10 +37,10 @@
 <script setup lang="ts">
 import stoerungen from '@/assets/stoerungen.json';
 import { ref, watch } from 'vue';
+import ConfirmModal from './components/modals/templates/ConfirmModal.vue';
 import TheModalContainer from './components/modals/TheModalContainer.vue';
 import Button from './components/ui/Button.vue';
 import ModalController from './controllers/modal-controller';
-import ConfirmModal from './components/modals/templates/ConfirmModal.vue';
 
 const spaces = ref<String[]>([]);
 
@@ -165,7 +167,13 @@ function getEntryByIndex(index: number) {
     display: flex;
     flex-direction: column;
     padding: 1.2rem;
-    gap: 0.8rem;
+    gap: 1.6rem;
+
+    section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
 }
 
 .scrollable-container {

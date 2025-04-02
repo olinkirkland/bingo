@@ -1,1 +1,1 @@
-{"root":["./src/main.ts","./src/vite-env.d.ts","./src/app.vue","./src/components/ui/button.vue"],"version":"5.7.3"}
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/controllers/modal-controller.ts","./src/app.vue","./src/components/modals/modalframe.vue","./src/components/modals/modalheader.vue","./src/components/modals/themodalcontainer.vue","./src/components/modals/templates/confirmmodal.vue","./src/components/ui/button.vue"],"version":"5.7.3"}
