@@ -229,6 +229,24 @@ function claimBingo() {
 function sendSMS(bingoString: string) {
     console.log('navigator.userAgent', navigator.userAgent);
     console.log(bingoString);
+    if (navigator.canShare && navigator.canShare()) {
+        let tryAnotherWay = false;
+        navigator
+            .share({
+                text: bingoString
+            })
+            .catch((error) => {
+                console.error('Error sharing:', error);
+                tryAnotherWay = true;
+            })
+            .then(() => {
+                console.log('Shared successfully');
+            });
+
+        if (!tryAnotherWay) return;
+    } else {
+        console.log('Sharing not supported, trying another way');
+    }
 
     if (navigator.userAgent.match(/Android/i)) {
         window.open(`sms:?body=${encodeURIComponent(bingoString)}`, '_self');
