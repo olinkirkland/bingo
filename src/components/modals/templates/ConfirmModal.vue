@@ -10,7 +10,11 @@
                 <p v-html="props.message"></p>
 
                 <div class="choices">
-                    <Button class="btn" @click="onClickCancel">
+                    <Button
+                        class="btn"
+                        @click="onClickCancel"
+                        v-if="props.onCancel"
+                    >
                         <span>{{ props.cancelText || 'Cancel' }}</span>
                     </Button>
                     <Button

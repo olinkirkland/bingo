@@ -1,7 +1,10 @@
 <template>
     <div class="app">
         <section>
-            <h1>DB Bingo</h1>
+            <div>
+                <h1>DB Bingo</h1>
+                <em>Programmiert von Olin • Idee von Brenden</em>
+            </div>
             <p>
                 Klicke auf die Felder, um sie durchzustreichen. Klicke erneut
                 auf ein Feld, um es wieder zu entfernen.
@@ -26,10 +29,17 @@
             </ul>
         </div>
 
-        <Button @click="askAndResetSpaces" primary>
-            <i class="fas fa-random"></i>
-            <span>Felder mischen</span></Button
-        >
+        <section>
+            <Button @click="claimBingo" primary v-if="isBingo()">
+                <i class="fas fa-share-alt"></i>
+                <span>Bingo teilen</span>
+            </Button>
+
+            <Button @click="askAndResetSpaces">
+                <i class="fas fa-random"></i>
+                <span>Felder mischen</span></Button
+            >
+        </section>
     </div>
     <the-modal-container />
 </template>
@@ -134,6 +144,34 @@ function toggleEntryByIndex(index: number) {
     }
 }
 
+function isBingo() {
+    // Detect if there is a bingo
+    // Check rows, columns, and diagonals
+    const bingoPatterns = [
+        // Rows
+        [0, 1, 2, 3, 4],
+        [5, 6, 7, 8, 9],
+        [10, 11, 12, 13, 14],
+        [15, 16, 17, 18, 19],
+        [20, 21, 22, 23, 24],
+        // Columns
+        [0, 5, 10, 15, 20],
+        [1, 6, 11, 16, 21],
+        [2, 7, 12, 17, 22],
+        [3, 8, 13, 18, 23],
+        [4, 9, 14, 19, 24],
+        // Diagonals
+        [0, 6, 12, 18, 24],
+        [4, 8, 12, 16, 20]
+    ];
+
+    return bingoPatterns.some((pattern) =>
+        pattern.every((index) =>
+            data.value.entries.some((entry) => entry.index === index)
+        )
+    );
+}
+
 function formatEntryDate(date: number | undefined) {
     // Format the date to a readable format
     if (!date) return '';
@@ -154,6 +192,64 @@ function getEntryByIndex(index: number) {
 
     return entry;
 }
+
+function claimBingo() {
+    const oldestDate = Math.min(
+        ...data.value.entries.map((entry) => entry.date)
+    );
+    const recentDate = Math.max(
+        ...data.value.entries.map((entry) => entry.date)
+    );
+    const daysTaken =
+        Math.floor((recentDate - oldestDate) / (1000 * 60 * 60 * 24)) || 1;
+
+    // Create a Bingo string like how the Wordle does it
+    let bingoString = `DB Bingo (${daysTaken} days)`;
+
+    // 🟥⬛
+
+    // 5x5 grid, made of 5x5 squares
+    const grid = Array.from({ length: 5 }, () => Array(5).fill('⬛'));
+    data.value.entries.forEach((entry) => {
+        const index = entry.index;
+        const row = Math.floor(index / 5);
+        const col = index % 5;
+        grid[row][col] = '🟥';
+    });
+
+    bingoString += '\n\n';
+    grid.forEach((row) => {
+        bingoString += row.join('') + '\n';
+    });
+
+    // Send the Bingo string
+    sendSMS(bingoString);
+}
+
+function sendSMS(bingoString: string) {
+    console.log('navigator.userAgent', navigator.userAgent);
+    console.log(bingoString);
+
+    if (navigator.userAgent.match(/Android/i)) {
+        window.open(`sms:?body=${encodeURIComponent(bingoString)}`, '_self');
+    } else if (navigator.userAgent.match(/iPhone/i)) {
+        window.open(`sms:?body=${encodeURIComponent(bingoString)}`, '_self');
+    } else {
+        // Copy it to the clipboard
+        navigator.clipboard.writeText(bingoString).then(() => {
+            // Show a success message
+            ModalController.open(ConfirmModal, {
+                title: 'Bingo!',
+                message: `<em>Bingo Nachricht wurde kopiert!</em><br/><br/>${bingoString.replaceAll('\n', '<br/>')}`,
+                confirmText: 'OK',
+                cancelText: null,
+                onConfirm: () => {
+                    ModalController.close();
+                }
+            });
+        });
+    }
+}
 </script>
 
 <style lang="scss">
@@ -172,7 +268,13 @@ function getEntryByIndex(index: number) {
     section {
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.8rem;
+        em {
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 0.1rem;
+            opacity: 0.8;
+        }
     }
 }
 
