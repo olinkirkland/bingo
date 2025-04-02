@@ -19,6 +19,7 @@ button.btn {
     width: min-content;
     gap: 0.8rem;
     align-items: center;
+    min-height: 4rem;
     height: 4rem;
     padding: 0 1.6rem;
     border-radius: 5px;
