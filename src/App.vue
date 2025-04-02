@@ -204,7 +204,7 @@ function claimBingo() {
         Math.floor((recentDate - oldestDate) / (1000 * 60 * 60 * 24)) || 1;
 
     // Create a Bingo string like how the Wordle does it
-    let bingoString = `DB Bingo (${daysTaken} days)`;
+    let bingoString = `DB Bingo (${daysTaken} Tage)`;
 
     // 🟥⬛
 
@@ -280,7 +280,7 @@ function sendSMS(bingoString: string) {
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 1.2rem;
+    padding: 2rem;
     gap: 1.6rem;
 
     section {
