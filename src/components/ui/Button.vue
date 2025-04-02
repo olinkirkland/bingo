@@ -63,4 +63,12 @@ button.btn {
         white-space: nowrap;
     }
 }
+
+@media (max-width: 768px) {
+    button.btn {
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+    }
+}
 </style>

@@ -24,17 +24,21 @@
             </ul>
         </div>
 
-        <Button @click="resetSpaces" primary>
+        <Button @click="askAndResetSpaces" primary>
             <i class="fas fa-random"></i>
-            <span>Reset Bingo Spaces</span></Button
+            <span>Felder mischen</span></Button
         >
     </div>
+    <the-modal-container />
 </template>
 
 <script setup lang="ts">
 import stoerungen from '@/assets/stoerungen.json';
 import { ref, watch } from 'vue';
+import TheModalContainer from './components/modals/TheModalContainer.vue';
 import Button from './components/ui/Button.vue';
+import ModalController from './controllers/modal-controller';
+import ConfirmModal from './components/modals/templates/ConfirmModal.vue';
 
 const spaces = ref<String[]>([]);
 
@@ -73,6 +77,23 @@ watch(
     },
     { deep: true }
 );
+
+function askAndResetSpaces() {
+    ModalController.open(ConfirmModal, {
+        title: 'Bingo Felder zurücksetzen',
+        message: 'Möchtest du die Bingo Felder mischen und zurücksetzen?',
+        confirmText: 'Ja, zurücksetzen',
+        cancelText: 'Nein, abbrechen',
+        isConfirmButtonCta: true,
+        onConfirm: () => {
+            resetSpaces();
+            ModalController.close();
+        },
+        onCancel: () => {
+            ModalController.close();
+        }
+    });
+}
 
 function resetSpaces() {
     // Clear entries
@@ -149,6 +170,7 @@ function getEntryByIndex(index: number) {
 
 .scrollable-container {
     width: 100%;
+    max-width: 64rem;
     height: 100%;
     overflow-y: auto;
     overflow-x: auto;
