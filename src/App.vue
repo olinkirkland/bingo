@@ -70,6 +70,16 @@ if (storedSpaces) {
 } else {
     // If no spaces are found, reset the spaces
     resetSpaces();
+    setTimeout(() => {
+        // Choose the free space
+        const centerIndex = Math.floor(spaces.value.length / 2);
+
+        // Add the free space to the data
+        data.value.entries.push({
+            index: centerIndex,
+            date: new Date().getTime()
+        });
+    });
 }
 
 // Load entries from localstorage
@@ -302,6 +312,8 @@ function sendSMS(bingoString: string) {
     height: 100%;
     overflow-y: auto;
     overflow-x: auto;
+    // Hide scrollbar
+    scrollbar-color: transparent transparent;
     padding: 2rem;
     border-radius: 1rem;
     background-color: var(--color-surface);
@@ -327,6 +339,8 @@ ul.spaces {
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
+        user-select: none;
 
         > span {
             text-align: center;
