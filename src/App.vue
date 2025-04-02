@@ -1,10 +1,11 @@
 <template>
     <div class="app">
         <h1>DB Bingo</h1>
-        <Button @click="generateSpaces" primary>
-            <i class="fas fa-random"></i>
-            <span> Reset Bingo Spaces </span></Button
-        >
+        <p>
+            Klicke auf die Felder, um sie durchzustreichen. Klicke erneut auf
+            ein Feld, um es wieder zu entfernen.
+        </p>
+
         <div class="scrollable-container">
             <ul class="spaces">
                 <li
@@ -12,6 +13,7 @@
                     :key="index"
                     class="space"
                     :class="{ 'crossed-out': getEntryByIndex(index) }"
+                    @click="toggleEntryByIndex(index)"
                 >
                     <span>{{ space }}</span>
                     <i class="fas fa-times"></i>
@@ -21,12 +23,17 @@
                 </li>
             </ul>
         </div>
+
+        <Button @click="resetSpaces" primary>
+            <i class="fas fa-random"></i>
+            <span>Reset Bingo Spaces</span></Button
+        >
     </div>
 </template>
 
 <script setup lang="ts">
 import stoerungen from '@/assets/stoerungen.json';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from './components/ui/Button.vue';
 
 const spaces = ref<String[]>([]);
@@ -40,7 +47,38 @@ const data = ref<{
     entries: []
 });
 
-function generateSpaces() {
+// Load spaces from localstorage
+const storedSpaces = localStorage.getItem('bingo-spaces');
+if (storedSpaces) {
+    spaces.value = JSON.parse(storedSpaces);
+} else {
+    // If no spaces are found, reset the spaces
+    resetSpaces();
+}
+
+// Load entries from localstorage
+const storedEntries = localStorage.getItem('bingo-entries');
+if (storedEntries) {
+    data.value.entries = JSON.parse(storedEntries);
+} else {
+    // If no entries are found, initialize with an empty array
+    data.value.entries = [];
+}
+
+// Watch entries and save to localstorage
+watch(
+    () => data.value.entries,
+    (newEntries) => {
+        localStorage.setItem('bingo-entries', JSON.stringify(newEntries));
+    },
+    { deep: true }
+);
+
+function resetSpaces() {
+    // Clear entries
+    data.value.entries = [];
+
+    // Randomize the spaces
     const randomizedStoerungen = stoerungen.sort(() => Math.random() - 0.5);
     spaces.value = randomizedStoerungen.slice(0, 24);
 
@@ -53,6 +91,24 @@ function generateSpaces() {
         index: centerIndex,
         date: new Date().getTime()
     });
+
+    // Save spaces to localstorage
+    localStorage.setItem('bingo-spaces', JSON.stringify(spaces.value));
+}
+
+function toggleEntryByIndex(index: number) {
+    if (data.value.entries.some((entry) => entry.index === index)) {
+        // If the entry is already crossed out, remove it
+        data.value.entries = data.value.entries.filter(
+            (entry) => entry.index !== index
+        );
+    } else {
+        // Otherwise, add it
+        data.value.entries.push({
+            index: index,
+            date: new Date().getTime()
+        });
+    }
 }
 
 function formatEntryDate(date: number | undefined) {
