@@ -2,7 +2,7 @@
     <div class="app">
         <section>
             <div>
-                <h1>DB Bingo</h1>
+                <h1>Bahn Bingo</h1>
                 <em>Programmiert von Olin • Idee von Brenden</em>
             </div>
             <p>
@@ -204,7 +204,7 @@ function claimBingo() {
         Math.floor((recentDate - oldestDate) / (1000 * 60 * 60 * 24)) || 1;
 
     // Create a Bingo string like how the Wordle does it
-    let bingoString = `DB Bingo (${daysTaken} Tage)`;
+    let bingoString = `Bahn Bingo (${daysTaken} Tage)`;
 
     // 🟥⬛
 
